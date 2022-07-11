@@ -6,7 +6,7 @@ const Users = () => {
 
     const [users, seUsers] = useState(() => api.users.fetchAll());
 
-    const handleDelete = (userId) => {
+    const handleDelete = userId => {
         seUsers(prevState => prevState.filter((user => user._id !== userId)))
     };
 
@@ -27,7 +27,7 @@ const Users = () => {
     };
 
     const renderTableRows = () => {
-        return users.map((user) => {
+        return users.map(user => {
             return (
                 <tr key={user._id} className="align-middle">
                     <td>{user.name}</td>
