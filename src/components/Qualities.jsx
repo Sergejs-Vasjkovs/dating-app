@@ -1,17 +1,10 @@
 import React from 'react';
 
-const Qualities = (props) => {
-
-    const { qualities } = props;
-
+const Qualities = ({ qual }) => {
     return (
-        <>
-            {qualities.map(q =>
-                <span key={q._id}
-                    className={`badge bg-${q.color} m-1`}>
-                    {q.name}
-                </span >)}
-        </>
+        <span className={`badge bg-${qual.color} m-1`}>
+            {qual.name}
+        </span>
     );
 };
 
