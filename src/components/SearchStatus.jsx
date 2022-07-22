@@ -1,26 +1,32 @@
 import React from "react";
 import "numeralize-ru";
+import PropTypes from "prop-types";
 
 const SearchStatus = (props) => {
     const { users } = props;
+    const usersLength = users.length;
 
     const pluralize = require("numeralize-ru").pluralize;
-    const human = pluralize(users.length, "человек", "человека", "человек");
-    const party = pluralize(users.length, "тусанет", "тусанут", "тусанет");
+    const human = pluralize(usersLength, "человек", "человека", "человек");
+    const party = pluralize(usersLength, "тусанет", "тусанут", "тусанет");
 
     return (
         <h2>
             <span
                 className={
-                    "badge " + (users.length > 0 ? "bg-primary" : "bg-danger")
+                    "badge " + (usersLength > 0 ? "bg-primary" : "bg-danger")
                 }
             >
-                {users.length > 0
-                    ? `${users.length} ${human} ${party} с тобой сегодня`
+                {usersLength > 0
+                    ? `${usersLength} ${human} ${party} с тобой сегодня`
                     : `Никто с тобой не тусанет`}
             </span>
         </h2>
     );
+};
+
+SearchStatus.propTypes = {
+    users: PropTypes.array.isRequired
 };
 
 export default SearchStatus;

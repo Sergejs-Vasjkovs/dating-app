@@ -16,7 +16,6 @@ module.exports = {
         indent: ["error", 4],
         semi: [2, "always"],
         "space-before-function-paren": ["error", "never"],
-        quotes: ["error", "double", { allowTemplateLiterals: true }],
-        "react/prop-types": 0
+        quotes: ["error", "double", { allowTemplateLiterals: true }]
     }
 };

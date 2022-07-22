@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Pagination from "./Pagination";
 import User from "./User";
 import paginate from "../api/utils/paginate";
+import PropTypes from "prop-types";
 
 const Users = (props) => {
     const { users, onDelete } = props;
@@ -47,8 +48,8 @@ const Users = (props) => {
                         {userCrop.map((user) => (
                             <User
                                 key={user._id}
-                                user={user}
                                 onDelete={onDelete}
+                                {...user}
                             />
                         ))}
                     </tbody>
@@ -62,6 +63,11 @@ const Users = (props) => {
             />
         </>
     );
+};
+
+Users.propTypes = {
+    users: PropTypes.array.isRequired,
+    onDelete: PropTypes.func.isRequired
 };
 
 export default Users;
