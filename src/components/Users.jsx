@@ -16,22 +16,22 @@ const Users = (props) => {
     const pageSize = 4;
 
     useEffect(() => {
-        api.professions.fetchAll().then((data) => setProfessions(data));
+        api.professions.fetchAll().then(data => setProfessions(data));
     }, []);
 
     useEffect(() => {
         setCurrentPage(1);
     }, [selectedProf]);
 
-    const handleProfessionsSelect = (item) => {
+    const handleProfessionsSelect = item => {
         setSelectedProf(item);
     };
 
-    const handlePageChange = (pageIndex) => {
+    const handlePageChange = pageIndex => {
         setCurrentPage(pageIndex);
     };
 
-    const filteredUsers = selectedProf ? users.filter((user) => user.profession === selectedProf) : users;
+    const filteredUsers = selectedProf ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) : users;
     const count = filteredUsers.length;
     const userCrop = paginate(filteredUsers, currentPage, pageSize);
 
@@ -56,7 +56,6 @@ const Users = (props) => {
             <div className="d-flex flex-column w-100">
                 <SearchStatus users={filteredUsers} />
                 {count !== 0 && (
-
                     <table className="table table-striped">
                         <thead>
                             <tr>
