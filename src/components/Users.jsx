@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "./Pagination";
-import User from "./User";
+import UsersTable from "./UsersTable";
 import paginate from "../api/utils/paginate";
 import PropTypes from "prop-types";
 import GroupList from "./GroupList";
 import SearchStatus from "./SearchStatus";
 import api from "../api";
+import _ from "lodash";
 
 const Users = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState();
     const [selectedProf, setSelectedProf] = useState();
+    const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
 
     const { users, onDelete } = props;
     const pageSize = 4;
@@ -31,9 +33,14 @@ const Users = (props) => {
         setCurrentPage(pageIndex);
     };
 
+    const handleSort = (item) => {
+        setSortBy(item);
+    };
+
     const filteredUsers = selectedProf ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) : users;
     const count = filteredUsers.length;
-    const userCrop = paginate(filteredUsers, currentPage, pageSize);
+    const sortedUsers = _.orderBy(filteredUsers, [sortBy.iter], [sortBy.order]);
+    const userCrop = paginate(sortedUsers, currentPage, pageSize);
 
     const clearFilter = () => {
         setSelectedProf();
@@ -47,50 +54,19 @@ const Users = (props) => {
                         selectedItem={selectedProf}
                         items={professions}
                         onItemSelect={handleProfessionsSelect} />
-
                     <button
                         className="btn btn-secondary mt-2"
-                        onClick={clearFilter}><b>ОЧИСТИТЬ ФИЛЬТР</b></button>
+                        onClick={clearFilter}><b>ОЧИСТИТЬ ФИЛЬТР</b>
+                    </button>
                 </div>
             }
             <div className="d-flex flex-column w-100">
                 <SearchStatus users={filteredUsers} />
                 {count !== 0 && (
-                    <table className="table table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col" className="col-2">
-                                    Имя
-                                </th>
-                                <th scope="col" className="col-3">
-                                    Качества
-                                </th>
-                                <th scope="col" className="col-2">
-                                    Профессия
-                                </th>
-                                <th scope="col" className="col-2">
-                                    Встретился, раз
-                                </th>
-                                <th scope="col" className="col-1">
-                                    Оцента
-                                </th>
-                                <th scope="col" className="col-1">
-                                    Избранное
-                                </th>
-                                <th scope="col" className="col-1"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {userCrop.map((user) => (
-                                <User
-                                    key={user._id}
-                                    onDelete={onDelete}
-                                    {...user}
-                                />
-                            ))}
-                        </tbody>
-                    </table>
-                )}
+                    <UsersTable users={userCrop}
+                        onDelete={onDelete}
+                        onSort={handleSort}
+                        selectedSort={sortBy} />)}
                 <Pagination
                     itemsCount={count}
                     pageSize={pageSize}
