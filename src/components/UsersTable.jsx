@@ -1,9 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
-import TableHeader from "./TableHeader";
-import TableBody from "./TableBody";
 import Bookmark from "./Bookmark";
 import QualitiesList from "./QualitiesList";
+import Table from "./Table";
 export default function UsersTable({ users, onDelete, selectedSort, onSort }) {
     const columns = {
         name: { path: "name", name: "Имя" },
@@ -35,10 +34,12 @@ export default function UsersTable({ users, onDelete, selectedSort, onSort }) {
     };
 
     return (
-        <table className="table table-striped">
-            <TableHeader {...{ onSort, selectedSort, columns }} />
-            <TableBody {...{ columns, data: users, onDelete }} />
-        </table>
+        <Table
+            onSort={onSort}
+            selectedSort={selectedSort}
+            columns={columns}
+            data={users}
+        />
     );
 }
 
