@@ -12,6 +12,13 @@ export default function TableHeader({ onSort, selectedSort, columns }) {
             onSort({ path: item, order: "asc" });
         }
     };
+
+    const hahdleArrowDirection = () => {
+        if (selectedSort.order) {
+            return selectedSort.order === "asc" ? <i className=" bi bi-caret-down-fill" /> : <i className=" bi bi-caret-up-fill" />;
+        }
+    };
+
     return (
         <thead>
             <tr>
@@ -20,7 +27,7 @@ export default function TableHeader({ onSort, selectedSort, columns }) {
                         onClick={columns[column].path ? () => handleSort(columns[column].path) : undefined}
                         {...{ role: columns[column].path && "button" }}
                         scope="col">
-                        {columns[column].name}
+                        {columns[column].name} {columns[column].path ? hahdleArrowDirection() : undefined}
                     </th>))
                 }
             </tr>

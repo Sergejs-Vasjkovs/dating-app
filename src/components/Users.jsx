@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Pagination from "./Pagination";
 import UsersTable from "./UsersTable";
 import paginate from "../api/utils/paginate";
-// import PropTypes from "prop-types";
 import GroupList from "./GroupList";
 import SearchStatus from "./SearchStatus";
 import api from "../api";

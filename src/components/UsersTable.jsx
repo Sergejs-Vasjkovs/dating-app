@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Bookmark from "./Bookmark";
 import QualitiesList from "./QualitiesList";
-import Table from "./Table";
+import Table from "./table/Table";
 export default function UsersTable({ users, onDelete, selectedSort, onSort }) {
     const columns = {
         name: { path: "name", name: "Имя" },
