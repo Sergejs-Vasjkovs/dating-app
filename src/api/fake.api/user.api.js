@@ -58,7 +58,7 @@ const users = [
         qualities: [qualities.buller],
         completedMeetings: 247,
         rate: 3.5,
-        bookmark: false
+        bookmark: true
     },
     {
         _id: "67rdca3eeb7f6fgeed471818",
