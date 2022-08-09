@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import Bookmark from "./Bookmark";
 import QualitiesList from "./QualitiesList";
 import Table from "./table/Table";
-export default function UsersTable({ users, onDelete, selectedSort, onSort }) {
+
+const UsersTable = ({ users, onDelete, selectedSort, onSort }) => {
     const columns = {
         name: { path: "name", name: "Имя" },
         qualities: {
@@ -41,7 +42,7 @@ export default function UsersTable({ users, onDelete, selectedSort, onSort }) {
             data={users}
         />
     );
-}
+};
 
 UsersTable.propTypes = {
     users: PropTypes.array.isRequired,
@@ -49,3 +50,5 @@ UsersTable.propTypes = {
     onDelete: PropTypes.func.isRequired,
     selectedSort: PropTypes.object.isRequired
 };
+
+export default UsersTable;

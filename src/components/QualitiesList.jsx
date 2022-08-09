@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Qualities from "./Qualities";
 
-function QualitiesList({ qualities }) {
+const QualitiesList = ({ qualities }) => {
     return (
         <>
             {qualities.map((qual) => (
@@ -10,7 +10,7 @@ function QualitiesList({ qualities }) {
             ))}
         </>
     );
-}
+};
 
 QualitiesList.propTypes = {
     qualities: PropTypes.array.isRequired
