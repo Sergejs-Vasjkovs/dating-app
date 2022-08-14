@@ -15,15 +15,15 @@ const Users = () => {
 
     const pageSize = 4;
 
-    const [users, seUsers] = useState();
+    const [users, setUsers] = useState();
 
     useEffect(() => {
-        api.users.fetchAll().then(data => seUsers(data));
+        api.users.fetchAll().then(data => setUsers(data));
     }, []);
 
     const handleDelete = (userId) => {
         const newUsers = users.filter((user) => user._id !== userId);
-        seUsers(newUsers);
+        setUsers(newUsers);
     };
 
     useEffect(() => {
