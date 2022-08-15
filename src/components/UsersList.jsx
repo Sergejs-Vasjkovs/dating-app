@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "./Pagination";
-import UsersTable from "./UsersTable";
+import UsersTable from "./table/UsersTable";
 import paginate from "../api/utils/paginate";
 import GroupList from "./GroupList";
 import SearchStatus from "./SearchStatus";
 import api from "../api";
 import _ from "lodash";
 
-const Users = () => {
+const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState();
     const [selectedProf, setSelectedProf] = useState();
@@ -16,6 +16,10 @@ const Users = () => {
     const pageSize = 4;
 
     const [users, setUsers] = useState();
+
+    useEffect(() => {
+        api.users.fetchAll().then(data => setUsers(data));
+    }, []);
 
     useEffect(() => {
         api.users.fetchAll().then(data => setUsers(data));
@@ -90,4 +94,4 @@ const Users = () => {
     return (<h2 className="text-center">Loading...</h2>);
 };
 
-export default Users;
+export default UsersList;
