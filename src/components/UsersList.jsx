@@ -6,14 +6,16 @@ import GroupList from "./GroupList";
 import SearchStatus from "./SearchStatus";
 import api from "../api";
 import _ from "lodash";
+import InputSearch from "./InputSearch";
 
 const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState();
     const [selectedProf, setSelectedProf] = useState();
+    const [searchInput, setSeachInput] = useState("");
     const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
 
-    const pageSize = 4;
+    const pageSize = 6;
 
     const [users, setUsers] = useState();
 
@@ -28,6 +30,12 @@ const UsersList = () => {
     const handleDelete = (userId) => {
         const newUsers = users.filter((user) => user._id !== userId);
         setUsers(newUsers);
+    };
+
+    // вставляет данные в инпут после ввода
+    const handleInputChange = ({ target }) => {
+        setSeachInput(target.value); // как правильно использовать preveState для string?
+        console.log(target.value);
     };
 
     useEffect(() => {
@@ -50,6 +58,15 @@ const UsersList = () => {
         setSortBy(item);
     };
 
+    const searchUserInList = (searchInput) => {
+        const searchedUsers = users.filter((user) => user.name.toLowerCase().includes(searchInput.toLowerCase()));
+        setUsers(searchedUsers);
+    };
+
+    useEffect(() => {
+        searchUserInList(searchInput);
+    }, [searchInput]);
+
     if (users) {
         const filteredUsers = selectedProf ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) : users;
         const count = filteredUsers.length;
@@ -58,6 +75,7 @@ const UsersList = () => {
 
         const clearFilter = () => {
             setSelectedProf();
+            setSeachInput("");
         };
 
         return (
@@ -76,6 +94,12 @@ const UsersList = () => {
                 }
                 <div className="d-flex flex-column w-100">
                     <SearchStatus users={filteredUsers} />
+
+                    <InputSearch
+                        value={searchInput}
+                        onChange={handleInputChange}
+                    />
+
                     {count !== 0 && (
                         <UsersTable users={userCrop}
                             onDelete={handleDelete}
@@ -88,7 +112,7 @@ const UsersList = () => {
                         onPageChange={handlePageChange}
                     />
                 </div>
-            </div>
+            </div >
         );
     }
     return (<h2 className="text-center">Loading...</h2>);
