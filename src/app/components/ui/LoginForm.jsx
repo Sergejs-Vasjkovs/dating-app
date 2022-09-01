@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import FieldText from "../FieldText";
-import validator from "../../api/utils/validator";
+import FieldText from "../common/form/FieldText";
+import validator from "../../utils/validator";
 
-const Login = () => {
+const LoginForm = () => {
     const [data, setData] = useState({
         email: "",
         password: ""
@@ -75,4 +75,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default LoginForm;
