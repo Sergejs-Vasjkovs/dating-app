@@ -12,13 +12,12 @@ const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState();
     const [selectedProf, setSelectedProf] = useState();
-    const [searchInput, setSeachInput] = useState("");
+    const [searchQuery, setSeachQuery] = useState("");
+    const [users, setUsers] = useState();
     const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
 
     const pageSize = 6;
 
-    const [users, setUsers] = useState();
-
     useEffect(() => {
         api.users.fetchAll().then(data => setUsers(data));
     }, []);
@@ -26,17 +25,6 @@ const UsersList = () => {
     useEffect(() => {
         api.users.fetchAll().then(data => setUsers(data));
     }, []);
-
-    const handleDelete = (userId) => {
-        const newUsers = users.filter((user) => user._id !== userId);
-        setUsers(newUsers);
-    };
-
-    // вставляет данные в инпут после ввода
-    const handleInputChange = ({ target }) => {
-        setSeachInput(target.value); // как правильно использовать preveState для string?
-        console.log(target.value);
-    };
 
     useEffect(() => {
         api.professions.fetchAll().then(data => setProfessions(data));
@@ -44,9 +32,20 @@ const UsersList = () => {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedProf]);
+    }, [selectedProf, searchQuery]);
+
+    const handleDelete = (userId) => {
+        const newUsers = users.filter((user) => user._id !== userId);
+        setUsers(newUsers);
+    };
+
+    const handleSearchQuery = ({ target }) => {
+        if (searchQuery !== "") setSelectedProf(undefined);
+        setSeachQuery(target.value);
+    };
 
     const handleProfessionsSelect = item => {
+        setSeachQuery("");
         setSelectedProf(item);
     };
 
@@ -58,24 +57,21 @@ const UsersList = () => {
         setSortBy(item);
     };
 
-    const searchUserInList = (searchInput) => {
-        const searchedUsers = users.filter((user) => user.name.toLowerCase().includes(searchInput.toLowerCase()));
-        setUsers(searchedUsers);
-    };
-
-    useEffect(() => {
-        searchUserInList(searchInput);
-    }, [searchInput]);
-
     if (users) {
-        const filteredUsers = selectedProf ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) : users;
+        const filteredUsers = searchQuery
+            ? users.filter(user => user.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1)
+            : selectedProf
+                ? users.filter(
+                    (user) => JSON.stringify(user.profession) ===
+                        JSON.stringify(selectedProf))
+                : users;
+
         const count = filteredUsers.length;
         const sortedUsers = _.orderBy(filteredUsers, [sortBy.path], [sortBy.order]);
         const userCrop = paginate(sortedUsers, currentPage, pageSize);
 
         const clearFilter = () => {
             setSelectedProf();
-            setSeachInput("");
         };
 
         return (
@@ -96,8 +92,10 @@ const UsersList = () => {
                     <SearchStatus users={filteredUsers} />
 
                     <InputSearch
-                        value={searchInput}
-                        onChange={handleInputChange}
+                        type="text"
+                        name="search"
+                        value={searchQuery}
+                        onChange={handleSearchQuery}
                     />
 
                     {count !== 0 && (
