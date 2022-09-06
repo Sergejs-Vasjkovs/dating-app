@@ -8,8 +8,8 @@ import MultiSelectField from "../common/form/MultiSelectField";
 import CheckedBoxField from "../common/form/CheckedBoxField";
 
 const ReqisterForm = () => {
-    const [professions, setProfessions] = useState();
-    const [qualities, setQualities] = useState({});
+    const [profession, setProfession] = useState();
+    const [qualities, setQualities] = useState([]);
     const [errors, setError] = useState({});
     const [data, setData] = useState({
         email: "",
@@ -21,8 +21,21 @@ const ReqisterForm = () => {
     });
 
     useEffect(() => {
-        api.professions.fetchAll().then(data => setProfessions(data));
-        api.qualities.fetchAll().then(data => setQualities(data));
+        api.professions.fetchAll().then((data) => {
+            const professionsList = Object.keys(data).map((professionName) => ({
+                label: data[professionName].name,
+                value: data[professionName]._id
+            }));
+            setProfession(professionsList);
+        });
+        api.qualities.fetchAll().then((data) => {
+            const qualitiesList = Object.keys(data).map((optionName) => ({
+                label: data[optionName].name,
+                value: data[optionName]._id,
+                color: data[optionName].color
+            }));
+            setQualities(qualitiesList);
+        });
     }, []);
 
     useEffect(() => {
@@ -73,8 +86,37 @@ const ReqisterForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!validate()) return;
-        console.log(data);
+        const isValid = validate();
+        if (!isValid) return;
+        const { profession, qualities } = data;
+        console.log({
+            ...data,
+            profession: getProfessionById(profession),
+            qualities: getQualities(qualities)
+        });
+    };
+
+    const getProfessionById = (id) => {
+        for (const prof of profession) {
+            if (prof.value === id) {
+                return { _id: prof.value, name: prof.label };
+            }
+        }
+    };
+    const getQualities = (elements) => {
+        const qualitiesArray = [];
+        for (const elem of elements) {
+            for (const quality in qualities) {
+                if (elem.value === qualities[quality].value) {
+                    qualitiesArray.push({
+                        _id: qualities[quality].value,
+                        name: qualities[quality].label,
+                        color: qualities[quality].color
+                    });
+                }
+            }
+        }
+        return qualitiesArray;
     };
 
     const handleChange = (target) => {
@@ -109,7 +151,7 @@ const ReqisterForm = () => {
                 value={data.profession}
                 onChange={handleChange}
                 dafaultOption="Choose..."
-                options={professions}
+                options={profession}
                 error={errors.profession}
             />
             <RadioField

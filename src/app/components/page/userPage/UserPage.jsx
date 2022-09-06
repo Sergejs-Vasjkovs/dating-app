@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Qualities from "../../ui/qualities";
 import api from "../../../api";
 
 const UserPage = ({ userId }) => {
     const [user, setUser] = useState();
-
     useEffect(() => {
         api.users.getById(userId).then(data => setUser(data));
     }, []);
@@ -24,12 +23,14 @@ const UserPage = ({ userId }) => {
             <Qualities qualities={user.qualities} />
             <p>Completed meetings: {user.completedMeetings}</p>
             <p>Rate: {user.rate}</p>
-            <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => handleBack()}>
-                Back
-            </button>
+            <Link to={`/users/${user._id}/edit`}>
+                <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => handleBack()}>
+                    Change user
+                </button>
+            </Link>
         </div>;
     } else {
         return <h2 className="text-center">Loading...</h2>;
