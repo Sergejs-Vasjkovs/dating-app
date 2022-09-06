@@ -12,9 +12,13 @@ const FieldText = ({ label, type, name, value, onChange, error }) => {
         setShowPassword(prevState => !prevState);
     };
 
+    const handelChange = ({ target }) => {
+        onChange({ name: target.name, value: target.value });
+    };
+
     return (
-        <div className="mb-3 ">
-            <label htmlFor="email">{label}</label>
+        <div className="mb-3">
+            <label>{label}</label>
             <div className="input-group">
                 <input
                     className={getInputClasses()} placeholder={label.toLowerCase()}
@@ -22,7 +26,7 @@ const FieldText = ({ label, type, name, value, onChange, error }) => {
                     id={name}
                     name={name}
                     value={value}
-                    onChange={onChange} />
+                    onChange={handelChange} />
                 {type === "password" && <button className="btn btn-outline-secondary"
                     type="button"
                     onClick={toggleShowPassword}><i className={"bi bi-eye" + (showPassword ? "-slash" : "")}></i></button>}

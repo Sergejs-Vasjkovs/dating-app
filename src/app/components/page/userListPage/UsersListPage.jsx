@@ -6,7 +6,7 @@ import GroupList from "../../common/GroupList";
 import SearchStatus from "../../ui/SearchStatus";
 import api from "../../../api";
 import _ from "lodash";
-import InputSearch from "../../common/InputSearch";
+import InputSearch from "../../ui/InputSearch";
 
 const UsersListPage = () => {
     const [currentPage, setCurrentPage] = useState(1);

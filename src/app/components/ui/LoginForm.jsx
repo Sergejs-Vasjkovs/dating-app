@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import FieldText from "../common/form/FieldText";
+import TextField from "../common/form/TextField";
 import validator from "../../utils/validator";
+import CheckedBoxField from "../common/form/CheckedBoxField";
 
 const LoginForm = () => {
     const [data, setData] = useState({
         email: "",
-        password: ""
+        password: "",
+        stayOn: false
     });
 
     const [errors, setError] = useState({});
 
-    const handleChange = ({ target }) => {
+    const handleChange = (target) => {
         setData(prevState => ({
             ...prevState,
             [target.name]: target.value
@@ -62,16 +64,21 @@ const LoginForm = () => {
     const buttonIsValid = Object.keys(errors).length === 0;
 
     return (
-        <div className="d-flex flex-column align-items-center">
-            <h3 className="mb-4">Login page</h3>
-            <form className="col-sm-6 shadow p-4" onSubmit={handleSubmit}>
-                <FieldText label="E-mail" name="email" value={data.email} onChange={handleChange} error={errors.email} />
-                <FieldText label="Password" type="password" name="password" value={data.password} onChange={handleChange} error={errors.password} />
-                <div className="d-grid gap-2">
-                    <button className="btn btn-primary" type="submit" disabled={!buttonIsValid}>Enter</button>
-                </div>
-            </form>
-        </div>
+        <form onSubmit={handleSubmit}>
+            <TextField label="E-mail" name="email" value={data.email} onChange={handleChange} error={errors.email} />
+            <TextField label="Password" type="password" name="password" value={data.password} onChange={handleChange} error={errors.password} />
+
+            <CheckedBoxField
+                value={data.stayOn}
+                onChange={handleChange}
+                name="stayOn"
+            >Stay login
+            </CheckedBoxField>
+
+            <div className="d-grid gap-2">
+                <button className="btn btn-primary" type="submit" disabled={!buttonIsValid}>Enter</button>
+            </div>
+        </form>
     );
 };
 
