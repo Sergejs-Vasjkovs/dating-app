@@ -92,6 +92,14 @@ const EditPage = () => {
         }
     };
 
+    const getProfessionID = (profession) => {
+        for (const prof of professions) {
+            if (prof.label === profession) {
+                return prof.value;
+            }
+        }
+    };
+
     const getQualities = (elements) => {
         const qualitiesArray = [];
         for (const elem of elements) {
@@ -146,7 +154,7 @@ const EditPage = () => {
                             <SelectField
                                 label="Professions"
                                 name="profession"
-                                value={user.profession}
+                                value={getProfessionID(user.profession)}
                                 onChange={handleChange}
                                 defaultOption="Choose..."
                                 options={professions}
