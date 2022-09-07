@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TextField from "../common/form/TextField";
 import validator from "../../utils/validator";
-import CheckedBoxField from "../common/form/CheckedBoxField";
+import CheckBoxField from "../common/form/CheckBoxField";
 
 const LoginForm = () => {
     const [data, setData] = useState({
@@ -68,12 +68,12 @@ const LoginForm = () => {
             <TextField label="E-mail" name="email" value={data.email} onChange={handleChange} error={errors.email} />
             <TextField label="Password" type="password" name="password" value={data.password} onChange={handleChange} error={errors.password} />
 
-            <CheckedBoxField
+            <CheckBoxField
                 value={data.stayOn}
                 onChange={handleChange}
                 name="stayOn"
             >Stay login
-            </CheckedBoxField>
+            </CheckBoxField>
 
             <div className="d-grid gap-2">
                 <button className="btn btn-primary" type="submit" disabled={!buttonIsValid}>Enter</button>

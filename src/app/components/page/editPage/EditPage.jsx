@@ -1,23 +1,53 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import api from "../../../api";
 import MultiSelectField from "../../common/form/MultiSelectField";
 import RadioField from "../../common/form/RadioField";
 import SelectField from "../../common/form/SelectField";
 import TextField from "../../common/form/TextField";
+import validator from "../../../utils/validator";
 
 const EditPage = () => {
     const params = useParams();
     const { userId } = params;
+    const history = useHistory();
 
     const [user, setUser] = useState({});
     const [qualities, setQualities] = useState([]);
-    const [profession, setProfession] = useState();
-    // const history = useHistory();
+    const [professions, setProfessions] = useState();
+    const [errors, setErrors] = useState({});
 
-    // const handleBack = () => {
-    //     history.replace("/users");
-    // };
+    const validatorConfig = {
+        email: {
+            isRequired: {
+                message: "Электронная почта обязательна для заполнения"
+            },
+            isEmail: {
+                message: "Email введен некорректно"
+            }
+        },
+        name: {
+            isRequired: {
+                message: "Имя обязателен для заполнения"
+            },
+            min: {
+                message: "Имя должен состоять минимум из 3 символов",
+                value: 3
+            }
+        }
+    };
+
+    useEffect(() => {
+        validate();
+    }, [user]);
+
+    const validate = () => {
+        const errors = validator(user, validatorConfig);
+        setErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const isValid = Object.keys(errors).length === 0;
 
     const handleChange = (target) => {
         setUser(prevState => ({
@@ -41,7 +71,7 @@ const EditPage = () => {
                 label: data[professionName].name,
                 value: data[professionName]._id
             }));
-            setProfession(professionsList);
+            setProfessions(professionsList);
         });
 
         api.qualities.fetchAll().then((data) => {
@@ -54,25 +84,54 @@ const EditPage = () => {
         });
     }, []);
 
-    const handleSubmit = () => {
-        console.log("handle form", user);
-        api.users.update(userId, user);
+    const getProfessionById = (id) => {
+        for (const prof of professions) {
+            if (prof.value === id) {
+                return { _id: prof.value, name: prof.label };
+            }
+        }
     };
-    // console.log("user", user);
-    // console.log("qualities", qualities);
-    // console.log("user.qualities", user.qualities);
-    if (user) {
+
+    const getQualities = (elements) => {
+        const qualitiesArray = [];
+        for (const elem of elements) {
+            for (const quality in qualities) {
+                if (elem.value === qualities[quality].value) {
+                    qualitiesArray.push({
+                        _id: qualities[quality].value,
+                        name: qualities[quality].label,
+                        color: qualities[quality].color
+                    });
+                }
+            }
+        }
+        return qualitiesArray;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const isValid = validate();
+        if (!isValid) return;
+        const { profession, qualities } = user;
+        api.users.update(userId, {
+            ...user,
+            profession: getProfessionById(profession),
+            qualities: getQualities(qualities)
+        }).then(history.replace("/users"));
+    };
+
+    if (user && qualities && professions) {
         return (
             <div className="container mt-5">
                 <div className="row d-flex flex-column align-items-center">
                     <div className="col-md-6 shadow p-4">
                         <form onSubmit={handleSubmit}>
-                            <div>{console.log(user)}</div>
                             <TextField
                                 label="Name"
                                 name="name"
                                 value={user.name}
                                 onChange={handleChange}
+                                error={errors.name}
                             />
 
                             <TextField
@@ -81,6 +140,7 @@ const EditPage = () => {
                                 value={user.email}
                                 type="email"
                                 onChange={handleChange}
+                                error={errors.email}
                             />
 
                             <SelectField
@@ -89,7 +149,8 @@ const EditPage = () => {
                                 value={user.profession}
                                 onChange={handleChange}
                                 defaultOption="Choose..."
-                                options={profession}
+                                options={professions}
+                                error={errors.profession}
                             />
 
                             <RadioField
@@ -112,12 +173,11 @@ const EditPage = () => {
                                 label="Choose your qualities" />
 
                             <div className="d-grid gap-2">
-                                <Link to={`/users`}>
-                                    <button
-                                        className="btn btn-primary"
-                                        type="submit"
-                                    >Change</button>
-                                </Link>
+                                <button
+                                    className="btn btn-primary col-md-12"
+                                    type="submit"
+                                    disabled={!isValid}
+                                >Change</button>
                             </div>
                         </form>
                     </div>
