@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 
 const SelectField = ({ label, value, onChange, defaultOption, options, error, name }) => {
     const handleChange = ({ target }) => {
-        console.log(target.name);
-        console.log(target.value);
         onChange({ name: target.name, value: target.value });
     };
     const getInputClasses = () => {
@@ -33,13 +31,13 @@ const SelectField = ({ label, value, onChange, defaultOption, options, error, na
                 </option>
                 {optionsArray.length > 0 &&
                     optionsArray.map((option) => (
-                        <option
-                            key={option.value}
-                            value={option.label}>{option.label}</option>
+                        <option value={option.value} key={option.value} >
+                            {option.label}
+                        </option>
                     ))}
             </select>
             {error && <div className="invalid-feedback">{error}</div>}
-        </div>
+        </div >
     );
 };
 
