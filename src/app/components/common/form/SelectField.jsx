@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 
 const SelectField = ({ label, value, onChange, defaultOption, options, error, name }) => {
     const handleChange = ({ target }) => {
+        console.log(target.name);
+        console.log(target.value);
         onChange({ name: target.name, value: target.value });
     };
     const getInputClasses = () => {
@@ -14,7 +16,6 @@ const SelectField = ({ label, value, onChange, defaultOption, options, error, na
             ? Object.values(options)
             : options;
 
-    console.log("value", value);
     return (
         <div className="mb-4">
             <label htmlFor={name} className="form-label">
@@ -34,7 +35,7 @@ const SelectField = ({ label, value, onChange, defaultOption, options, error, na
                     optionsArray.map((option) => (
                         <option
                             key={option.value}
-                            value={option.value}>{option.label}</option>
+                            value={option.label}>{option.label}</option>
                     ))}
             </select>
             {error && <div className="invalid-feedback">{error}</div>}
