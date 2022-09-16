@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Qualities from "../../ui/qualities";
-import api from "../../../api";
+import api from "../../../api/";
 
 const UserPage = ({ userId }) => {
     const [user, setUser] = useState();
@@ -12,8 +12,8 @@ const UserPage = ({ userId }) => {
 
     const history = useHistory();
 
-    const handleBack = () => {
-        history.replace("/users");
+    const handleClick = () => {
+        history.push(history.location.pathname + "/edit");
     };
 
     if (user) {
@@ -27,7 +27,7 @@ const UserPage = ({ userId }) => {
                 <button
                     type="button"
                     className="btn btn-danger"
-                    onClick={() => handleBack()}>
+                    onClick={() => handleClick()}>
                     Change user
                 </button>
             </Link>
