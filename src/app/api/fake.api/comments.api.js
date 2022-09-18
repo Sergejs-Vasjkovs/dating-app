@@ -28,7 +28,7 @@ const fetchAll = () =>
     new Promise((resolve) => {
         window.setTimeout(function () {
             resolve(comments);
-        }, 200);
+        }, 100);
     });
 
 const fetchCommentsForUser = (userId) =>
@@ -39,7 +39,7 @@ const fetchCommentsForUser = (userId) =>
                     (c) => c.pageId === userId
                 )
             );
-        }, 200);
+        }, 100);
     });
 const add = (data) =>
     new Promise((resolve) => {
@@ -53,7 +53,7 @@ const add = (data) =>
             comments.push(newComment);
             localStorage.setItem("comments", JSON.stringify(comments));
             resolve(newComment);
-        }, 200);
+        }, 100);
     });
 
 const remove = (id) =>
@@ -61,11 +61,11 @@ const remove = (id) =>
         window.setTimeout(function () {
             const comments = JSON.parse(localStorage.getItem("comments"));
             const newComments = comments.filter((x) => x._id !== id);
-            console.log(id);
-            console.log(newComments);
+            // console.log(id);
+            // console.log(newComments);
             localStorage.setItem("comments", JSON.stringify(newComments));
             resolve(id);
-        }, 200);
+        }, 100);
     });
 export default {
     fetchAll,

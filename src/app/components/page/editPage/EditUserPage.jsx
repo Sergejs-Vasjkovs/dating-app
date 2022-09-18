@@ -93,6 +93,10 @@ const EditUserPage = () => {
         }));
     };
 
+    const handleBack = () => {
+        history.push(`/users/${data._id}`);
+    };
+
     useEffect(() => {
         setIsLoading(true);
         api.users.getById(userId).then(({ qualities, profession, ...data }) => {
@@ -129,7 +133,6 @@ const EditUserPage = () => {
     useEffect(() => {
         validate();
     }, [data]);
-
     return (
         <div className="container mt-5">
             <div className="row d-flex flex-column align-items-center">
@@ -187,7 +190,12 @@ const EditUserPage = () => {
                                     className="btn btn-primary col-md-12"
                                     type="submit"
                                     disabled={!isValid}
-                                >Change</button>
+                                >Save</button>
+                                <button
+                                    className="btn btn-dark col-md-12"
+                                    type="button"
+                                    onClick={handleBack}
+                                >Back</button>
                             </div>
                         </form>) :
                         (<h2 className="text-center">Loading...</h2>)}
