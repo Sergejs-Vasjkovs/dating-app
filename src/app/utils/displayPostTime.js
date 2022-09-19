@@ -30,7 +30,7 @@ export const displayPostTime = (time) => {
         const dayWord = pluralize(year, "день", "дня", "дней");
         return month ? `${month} ${monthWord} ${year ? `и ${year} ${dayWord}` : ``} назад` : `${year} ${dayWord} назад`;
     }
-    const year = new Date(differens).getFullYear();
+    const year = Math.floor(differens / 1000 / 60 / 60 / 24 / 365);
     const yearWord = pluralize(year, "год", "года", "лет");
     return `${year} ${yearWord} назад`;
 };
