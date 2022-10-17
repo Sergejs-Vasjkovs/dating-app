@@ -36,7 +36,6 @@ const SelectField = ({ label, value, onChange, defaultOption, options, error, na
                         </option>
                     ))}
             </select>
-            {error && <div className="invalid-feedback">{error}</div>}
         </div >
     );
 };

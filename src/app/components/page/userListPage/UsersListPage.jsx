@@ -7,24 +7,16 @@ import SearchStatus from "../../ui/SearchStatus";
 import api from "../../../api";
 import _ from "lodash";
 import InputSearch from "../../ui/InputSearch";
+import { useUser } from "../../../hooks/useUsers";
 
 const UsersListPage = () => {
+    const { users } = useUser();
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState();
     const [selectedProf, setSelectedProf] = useState();
     const [searchQuery, setSeachQuery] = useState("");
-    const [users, setUsers] = useState();
     const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
-
     const pageSize = 6;
-
-    useEffect(() => {
-        api.users.fetchAll().then(data => setUsers(data));
-    }, []);
-
-    useEffect(() => {
-        api.users.fetchAll().then(data => setUsers(data));
-    }, []);
 
     useEffect(() => {
         api.professions.fetchAll().then(data => setProfessions(data));
@@ -35,8 +27,8 @@ const UsersListPage = () => {
     }, [selectedProf, searchQuery]);
 
     const handleDelete = (userId) => {
-        const newUsers = users.filter((user) => user._id !== userId);
-        setUsers(newUsers);
+        // const newUsers = users.filter((user) => user._id !== userId);
+        console.log(userId);
     };
 
     const handleSearchQuery = ({ target }) => {

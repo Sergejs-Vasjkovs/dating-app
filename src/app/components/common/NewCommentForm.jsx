@@ -4,13 +4,14 @@ import PropTypes from "prop-types";
 import SelectField from "./form/SelectField";
 import validator from "../../utils/validator";
 import TextAreaField from "./form/TextAreaField";
+const initialData = {
+    userId: "",
+    content: ""
+};
 
 const NewCommentForm = ({ onSubmit }) => {
     const [users, setUsers] = useState({});
-    const [data, setData] = useState({
-        userId: "",
-        content: ""
-    });
+    const [data, setData] = useState(initialData);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -49,10 +50,7 @@ const NewCommentForm = ({ onSubmit }) => {
         const isValid = validate();
         if (!isValid) return;
         onSubmit(data);
-        setData({
-            userId: "",
-            content: ""
-        });
+        setData(initialData);
         setErrors({});
     };
 
