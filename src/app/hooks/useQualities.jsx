@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import QualitiesService from "../services/qualities.service";
+import qualitiesService from "../services/qualities.service";
 import { toast } from "react-toastify";
 
 const QualitiesContext = React.createContext();
@@ -27,7 +27,7 @@ export const QualitiesProvider = ({ children }) => {
 
     async function getQualities() {
         try {
-            const { content } = await QualitiesService.get();
+            const { content } = await qualitiesService.fetchAll();
             setQualities(content);
             setLoading(false);
         } catch (error) {
@@ -35,14 +35,18 @@ export const QualitiesProvider = ({ children }) => {
         }
     };
 
-    function errorCatcher(error) {
+    const getQualityById = (id) => {
+        return qualities.find(qual => qual._id === id);
+    };
+
+    const errorCatcher = (error) => {
         const { message } = error.response.data;
         setError(message);
-    }
+    };
 
     return (
         <QualitiesContext.Provider
-            value={{ isLoading, qualities }}>
+            value={{ isLoading, qualities, getQualityById }}>
             {children}
         </QualitiesContext.Provider>
     );
