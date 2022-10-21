@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import validator from "../../utils/validator";
 import TextField from "../common/form/TextField";
-// import api from "../../api";
 import SelectField from "../common/form/SelectField";
 import RadioField from "../common/form/RadioField";
 import MultiSelectField from "../common/form/MultiSelectField";
@@ -18,6 +17,7 @@ const RegisterForm = () => {
         password: "",
         profession: "",
         sex: "male",
+        name: "",
         qualities: [],
         licence: false
     });
@@ -45,6 +45,15 @@ const RegisterForm = () => {
                 message: "Email введен некорректно"
             }
         },
+        name: {
+            isRequired: {
+                message: "Имя обязательна для заполнения"
+            },
+            minDigitCount: {
+                message: "Имя должен состоять минимум из 3 символов",
+                value: 3
+            }
+        },
         password: {
             isRequired: {
                 message: "Пароль обязателен для заполнения"
@@ -55,7 +64,7 @@ const RegisterForm = () => {
             isContainDigit: {
                 message: "Пароль должен содержать хотя бы одно число"
             },
-            min: {
+            minDigitCount: {
                 message: "Пароль должен состоять минимум из 8 символов",
                 value: 8
             }
@@ -88,7 +97,10 @@ const RegisterForm = () => {
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        const newData = { ...data, qualities: data.qualities.map(q => q.value) };
+        const newData = {
+            ...data,
+            qualities: data.qualities.map(q => q.value)
+        };
         try {
             await signUp(newData);
             history.push("/");
@@ -105,6 +117,13 @@ const RegisterForm = () => {
                 value={data.email}
                 onChange={handleChange}
                 error={errors.email}
+            />
+            <TextField
+                label="Имя"
+                name="name"
+                value={data.name}
+                onChange={handleChange}
+                error={errors.name}
             />
             <TextField
                 label="Пароль"

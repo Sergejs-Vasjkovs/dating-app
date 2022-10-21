@@ -12,11 +12,9 @@ const Main = () => {
         <div className="container m-5 text-center">
             <h3>Main page</h3>
             <h3>Инициализация данных в FireBase</h3>
-            <ul>
-                <li>Status: {status}</li>
-                <li>Progress: {progress} %</li>
-                {error && <li>error: {error}</li>}
-            </ul>
+            <p>Status: {status}</p>
+            <p>Progress: {progress} %</p>
+            {error && <p>error: {error}</p>}
             <button className="btn btn-primary"
                 onClick={handleClick}
             >Инициализация</button>

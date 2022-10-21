@@ -1,38 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import api from "../../../api/";
 import UserInfoCard from "../../common/user/UserInfoCard";
 import UserQualitiesCard from "../../common/user/UserQualitiesCard";
 import UserMeetingsCard from "../../common/user/UserMeetingsCard";
-import CommentsListComponent from "../../common/CommentsListComponent";
+import CommentsList from "../../common/CommentsList";
+import { useUser } from "../../../hooks/useUsers";
+import { CommentsProvider } from "../../../hooks/useComments";
 
 const UserPage = ({ userId }) => {
-    const [user, setUser] = useState();
-
-    useEffect(() => {
-        api.users.getById(userId).then(data => setUser(data));
-    }, []);
-
+    const { getUserById } = useUser();
+    const user = getUserById(userId);
     if (user) {
         return (<div className="container">
             <div className="row gutters-sm">
 
                 <div className="col-md-4 mb-3">
-                    <UserInfoCard
-                        id={user._id}
-                        name={user.name}
-                        profession={user.profession.name}
-                        rate={user.rate}
-                    />
-                    <UserQualitiesCard
-                        qualities={user.qualities}
-                    />
-                    <UserMeetingsCard
-                        value={user.completedMeetings} />
+                    <UserInfoCard user={user} />
+                    <UserQualitiesCard qualities={user.qualities} />
+                    <UserMeetingsCard value={user.completedMeetings} />
                 </div>
 
                 <div className="col-md-8">
-                    <CommentsListComponent />
+                    <CommentsProvider>
+                        <CommentsList />
+                    </CommentsProvider>
                 </div>
             </div>
         </div >);
