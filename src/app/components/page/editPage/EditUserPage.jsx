@@ -12,8 +12,10 @@ import { useAuth } from "../../../hooks/useAuth";
 
 const EditUserPage = () => {
     const { userId } = useParams();
+    const { updateUser, currentUser } = useAuth();
     const history = useHistory();
     const [errors, setErrors] = useState({});
+    const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState({
         email: "",
         password: "",
@@ -24,7 +26,6 @@ const EditUserPage = () => {
         licence: false
     });
 
-    const { updateUser } = useAuth();
     const { getUserById, isLoading: isLoadingUser } = useUser();
 
     const { professions: professionsList, isLoading: isLoadingProf } = useProfessions();
@@ -43,16 +44,21 @@ const EditUserPage = () => {
                 color: quality.color
             });
         }
+        setLoading(false);
         return qualitiesArray;
     };
 
     useEffect(() => {
-        const user = getUserById(userId);
-        setData((prevState) => ({
-            ...prevState,
-            ...user,
-            qualities: convertQualities(user)
-        }));
+        if (currentUser._id !== userId) {
+            history.push(`/users/${currentUser._id}`);
+        } else {
+            const user = getUserById(userId);
+            setData((prevState) => ({
+                ...prevState,
+                ...user,
+                qualities: convertQualities(user)
+            }));
+        }
     }, []);
 
     const handleSubmit = async (e) => {
@@ -114,7 +120,7 @@ const EditUserPage = () => {
         <div className="container mt-5">
             <div className="row d-flex flex-column align-items-center">
                 <div className="col-md-6 shadow p-4">
-                    {!isLoadingUser && !isLoadingProf && !isLoadingQual
+                    {!isLoadingUser && !isLoadingProf && !isLoadingQual && !isLoading
                         ? (<form onSubmit={handleSubmit}>
                             <TextField
                                 label="Name"
