@@ -122,13 +122,22 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateUser = async (user) => {
+        try {
+            const { content } = await userService.create(user);
+            setCurrunetUser(content);
+        } catch (error) {
+            errorCatcher(error);
+        }
+    };
+
     const errorCatcher = (error) => {
         const { message } = error.response.data;
         setError(message);
     };
 
     return (
-        <AuthContext.Provider value={{ signUp, currentUser, signIn, logOut }}>
+        <AuthContext.Provider value={{ signUp, currentUser, signIn, logOut, updateUser }}>
             {!isLoading ? children : "Loading..."}
         </AuthContext.Provider>
     );

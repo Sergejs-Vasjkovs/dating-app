@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 
 const UserInfoCard = ({ user }) => {
@@ -14,13 +14,11 @@ const UserInfoCard = ({ user }) => {
         <div className="card mb-3">
             <div className="card-body">
                 {currentUser._id === user._id &&
-                    <Link to={`/users/${user.id}/edit`}>
-                        <button className="position-absolute top-0 end-0 btn btn-light btn-sm"
-                            type="button"
-                            onClick={handleClick}>
-                            <i className="bi bi-gear"></i>
-                        </button>
-                    </Link>}
+                    <button className="position-absolute top-0 end-0 btn btn-light btn-sm"
+                        type="button"
+                        onClick={handleClick}>
+                        <i className="bi bi-gear"></i>
+                    </button>}
                 <div className="d-flex flex-column align-items-center text-center position-relative">
                     <img
                         src={user.image}

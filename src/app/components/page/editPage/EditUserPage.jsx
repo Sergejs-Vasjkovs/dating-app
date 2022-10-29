@@ -1,65 +1,74 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import api from "../../../api";
 import MultiSelectField from "../../common/form/MultiSelectField";
 import RadioField from "../../common/form/RadioField";
 import SelectField from "../../common/form/SelectField";
 import TextField from "../../common/form/TextField";
 import validator from "../../../utils/validator";
+import { useProfessions } from "../../../hooks/useProfession";
+import { useQualities } from "../../../hooks/useQualities";
+import { useUser } from "../../../hooks/useUsers";
+import { useAuth } from "../../../hooks/useAuth";
 
 const EditUserPage = () => {
     const { userId } = useParams();
     const history = useHistory();
-    const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState({});
     const [data, setData] = useState({
-        // name: "",
-        // email: "",
-        // profession: "",
-        // sex: "",
-        // qualities: []
+        email: "",
+        password: "",
+        profession: "",
+        sex: "male",
+        name: "",
+        qualities: [],
+        licence: false
     });
 
-    const [professions, setProfessions] = useState([]);
-    const [qualities, setQualities] = useState([]);
-    const [errors, setErrors] = useState({});
+    const { updateUser } = useAuth();
+    const { getUserById, isLoading: isLoadingUser } = useUser();
 
-    const getProfessionById = (id) => {
-        for (const prof of professions) {
-            if (prof.value === id) {
-                return { _id: prof.value, name: prof.label };
-            }
-        }
-    };
+    const { professions: professionsList, isLoading: isLoadingProf } = useProfessions();
+    const professions = professionsList.map(qual => ({ value: qual._id, label: qual.name }));
 
-    const getQualities = (elements) => {
+    const { qualities: qualitiesList, isLoading: isLoadingQual, getQualityById } = useQualities();
+    const qualities = qualitiesList.map(qual => ({ value: qual._id, label: qual.name, color: qual.color }));
+
+    const convertQualities = (data) => {
         const qualitiesArray = [];
-        for (const elem of elements) {
-            for (const quality in qualities) {
-                if (elem.value === qualities[quality].value) {
-                    qualitiesArray.push({
-                        _id: qualities[quality].value,
-                        name: qualities[quality].label,
-                        color: qualities[quality].color
-                    });
-                }
-            }
+        for (const id of data.qualities) {
+            const quality = getQualityById(id);
+            qualitiesArray.push({
+                value: quality._id,
+                label: quality.name,
+                color: quality.color
+            });
         }
         return qualitiesArray;
     };
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        const user = getUserById(userId);
+        setData((prevState) => ({
+            ...prevState,
+            ...user,
+            qualities: convertQualities(user)
+        }));
+    }, []);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        const { profession, qualities } = data;
-        api.users
-            .update(userId, {
-                ...data,
-                profession: getProfessionById(profession),
-                qualities: getQualities(qualities)
-            })
-            .then(history.push(`/users`));
-        // .then((data) => history.push(`/users/${data._id}`));
+        const newData = {
+            ...data,
+            qualities: data.qualities.map(q => q.value)
+        };
+        try {
+            await updateUser(newData);
+            handleBack();
+        } catch (error) {
+            setErrors(error);
+        }
     };
 
     const validatorConfig = {
@@ -94,50 +103,18 @@ const EditUserPage = () => {
     };
 
     const handleBack = () => {
-        history.push(`/users/${data._id}`);
+        history.goBack();
     };
-
-    useEffect(() => {
-        setIsLoading(true);
-        api.users.getById(userId).then(({ qualities, profession, ...data }) => {
-            setData(prevState => ({
-                ...prevState,
-                ...data,
-                qualities: qualities.map(qual => ({ label: qual.name, value: qual._id })),
-                profession: profession._id
-            }));
-        });
-
-        api.professions.fetchAll().then((data) => {
-            const professionsList = Object.keys(data).map((professionName) => ({
-                label: data[professionName].name,
-                value: data[professionName]._id
-            }));
-            setProfessions(professionsList);
-        });
-
-        api.qualities.fetchAll().then((data) => {
-            const qualitiesList = Object.keys(data).map((optionName) => ({
-                value: data[optionName]._id,
-                label: data[optionName].name,
-                color: data[optionName].color
-            }));
-            setQualities(qualitiesList);
-        });
-    }, []);
-
-    useEffect(() => {
-        if (data._id) setIsLoading(false);
-    }, [data]);
 
     useEffect(() => {
         validate();
     }, [data]);
+
     return (
         <div className="container mt-5">
             <div className="row d-flex flex-column align-items-center">
                 <div className="col-md-6 shadow p-4">
-                    {!isLoading && Object.keys(professions).length > 0
+                    {!isLoadingUser && !isLoadingProf && !isLoadingQual
                         ? (<form onSubmit={handleSubmit}>
                             <TextField
                                 label="Name"
