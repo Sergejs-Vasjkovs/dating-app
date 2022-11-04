@@ -98,6 +98,15 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateUser = async (user) => {
+        try {
+            const { content } = await userService.update(user);
+            setCurrunetUser(content);
+        } catch (error) {
+            errorCatcher(error);
+        }
+    };
+
     useEffect(() => {
         if (localStorageService.getAcessToken()) {
             getUserData();
@@ -116,15 +125,6 @@ export const AuthProvider = ({ children }) => {
     const createUser = async (data) => {
         try {
             const { content } = await userService.create(data);
-            setCurrunetUser(content);
-        } catch (error) {
-            errorCatcher(error);
-        }
-    };
-
-    const updateUser = async (user) => {
-        try {
-            const { content } = await userService.create(user);
             setCurrunetUser(content);
         } catch (error) {
             errorCatcher(error);

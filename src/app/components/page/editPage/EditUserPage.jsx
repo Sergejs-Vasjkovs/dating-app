@@ -1,80 +1,75 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import MultiSelectField from "../../common/form/MultiSelectField";
 import RadioField from "../../common/form/RadioField";
 import SelectField from "../../common/form/SelectField";
 import TextField from "../../common/form/TextField";
 import validator from "../../../utils/validator";
-import { useProfessions } from "../../../hooks/useProfession";
-import { useQualities } from "../../../hooks/useQualities";
-import { useUser } from "../../../hooks/useUsers";
 import { useAuth } from "../../../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { getQualities, getQualitiesLoadingStatus } from "../../../store/qualities";
+import { getProfessions, getProfessionsLoadingStatus } from "../../../store/profession";
 
 const EditUserPage = () => {
-    const { userId } = useParams();
-    const { updateUser, currentUser } = useAuth();
     const history = useHistory();
     const [errors, setErrors] = useState({});
     const [isLoading, setLoading] = useState(true);
-    const [data, setData] = useState({
-        email: "",
-        password: "",
-        profession: "",
-        sex: "male",
-        name: "",
-        qualities: [],
-        licence: false
-    });
+    const [data, setData] = useState();
+    const { updateUser, currentUser } = useAuth();
 
-    const { getUserById, isLoading: isLoadingUser } = useUser();
-
-    const { professions: professionsList, isLoading: isLoadingProf } = useProfessions();
+    const professionsList = useSelector(getProfessions());
+    const isLoadingProf = useSelector(getProfessionsLoadingStatus());
     const professions = professionsList.map(qual => ({ value: qual._id, label: qual.name }));
 
-    const { qualities: qualitiesList, isLoading: isLoadingQual, getQualityById } = useQualities();
-    const qualities = qualitiesList.map(qual => ({ value: qual._id, label: qual.name, color: qual.color }));
+    const qualitiesList = useSelector(getQualities());
+    const isLoadingQual = useSelector(getQualitiesLoadingStatus());
+    const qualities = qualitiesList.map(qual => ({ value: qual._id, label: qual.name }));
 
-    const convertQualities = (data) => {
-        const qualitiesArray = [];
-        for (const id of data.qualities) {
-            const quality = getQualityById(id);
-            qualitiesArray.push({
-                value: quality._id,
-                label: quality.name,
-                color: quality.color
+    useEffect(() => {
+        if (!isLoadingProf && !isLoadingQual && currentUser && !data) {
+            setData({
+                ...currentUser,
+                qualities: transformData(currentUser.qualities)
             });
         }
-        setLoading(false);
+    }, [isLoadingProf, isLoadingQual, currentUser, data]);
+
+    useEffect(() => {
+        if (data && isLoading) {
+            setLoading(false);
+        }
+    }, [data]);
+
+    useEffect(() => {
+        validate();
+    }, [data]);
+
+    const getQualitiesListByIds = (qualitiesIds) => {
+        const qualitiesArray = [];
+        for (const qualId of qualitiesIds) {
+            for (const quality of qualitiesList) {
+                if (quality._id === qualId) {
+                    qualitiesArray.push(quality);
+                    break;
+                }
+            }
+        }
         return qualitiesArray;
     };
 
-    useEffect(() => {
-        if (currentUser._id !== userId) {
-            history.push(`/users/${currentUser._id}`);
-        } else {
-            const user = getUserById(userId);
-            setData((prevState) => ({
-                ...prevState,
-                ...user,
-                qualities: convertQualities(user)
-            }));
-        }
-    }, []);
+    const transformData = (data) => {
+        return getQualitiesListByIds(data).map((qual) => ({ value: qual._id, label: qual.name }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const isValid = validate();
         if (!isValid) return;
-        const newData = {
+        await updateUser({
             ...data,
             qualities: data.qualities.map(q => q.value)
-        };
-        try {
-            await updateUser(newData);
-            handleBack();
-        } catch (error) {
-            setErrors(error);
-        }
+        });
+        history.push(`/users/${currentUser._id}`);
     };
 
     const validatorConfig = {
@@ -112,15 +107,11 @@ const EditUserPage = () => {
         history.goBack();
     };
 
-    useEffect(() => {
-        validate();
-    }, [data]);
-
     return (
         <div className="container mt-5">
             <div className="row d-flex flex-column align-items-center">
                 <div className="col-md-6 shadow p-4">
-                    {!isLoadingUser && !isLoadingProf && !isLoadingQual && !isLoading
+                    {!isLoading
                         ? (<form onSubmit={handleSubmit}>
                             <TextField
                                 label="Name"
