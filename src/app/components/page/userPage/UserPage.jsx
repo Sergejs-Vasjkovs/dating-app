@@ -4,12 +4,12 @@ import UserInfoCard from "../../common/user/UserInfoCard";
 import UserQualitiesCard from "../../common/user/UserQualitiesCard";
 import UserMeetingsCard from "../../common/user/UserMeetingsCard";
 import CommentsList from "../../common/CommentsList";
-import { useUser } from "../../../hooks/useUsers";
 import { CommentsProvider } from "../../../hooks/useComments";
+import { useSelector } from "react-redux";
+import { getUserById } from "../../../store/users";
 
 const UserPage = ({ userId }) => {
-    const { getUserById } = useUser();
-    const user = getUserById(userId);
+    const user = useSelector(getUserById(userId));
     if (user) {
         return (<div className="container">
             <div className="row gutters-sm">

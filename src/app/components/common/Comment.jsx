@@ -1,13 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { displayPostTime } from "../../utils/displayPostTime";
-import { useUser } from "../../hooks/useUsers";
-import { useAuth } from "../../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { getCurrentUserId, getUserById } from "../../store/users";
 
 const CommentComponent = ({ data, onRemove }) => {
-    const { getUserById } = useUser();
-    const { currentUser } = useAuth();
-    const user = getUserById(data.userId);
+    const currentUserId = useSelector(getCurrentUserId());
+    const user = useSelector(getUserById(data.userId));
     return (
         <div className="bg-light card-body  mb-3">
             <div className="row">
@@ -28,7 +27,7 @@ const CommentComponent = ({ data, onRemove }) => {
                                             - {displayPostTime(data.created_at)}
                                         </span>
                                     </p>
-                                    {currentUser._id === data.userId &&
+                                    {currentUserId === data.userId &&
                                         <button className="btn btn-sm text-primary d-flex align-items-center"
                                             onClick={() => onRemove(data._id)}>
                                             <i className="bi bi-x-lg"></i>

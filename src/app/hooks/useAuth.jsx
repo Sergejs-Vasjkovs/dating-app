@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        if (localStorageService.getAcessToken()) {
+        if (localStorageService.getAccessToken()) {
             getUserData();
         } else {
             setLoading(false);

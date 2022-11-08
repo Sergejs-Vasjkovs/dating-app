@@ -4,7 +4,7 @@ import { getDataStatus, loadUsersList } from "../../../store/users";
 import PropTypes from "prop-types";
 
 export const UsersLoader = ({ children }) => {
-    const dataStatus = useSelector(getDataStatus);
+    const dataStatus = useSelector(getDataStatus());
     const dispatch = useDispatch();
 
     useEffect(() => {

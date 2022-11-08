@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import TextField from "../common/form/TextField";
 import validator from "../../utils/validator";
 import CheckBoxField from "../common/form/CheckBoxField";
-import { useAuth } from "../../hooks/useAuth";
 import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../../store/users";
 
 const LoginForm = () => {
     const [data, setData] = useState({
@@ -13,15 +14,16 @@ const LoginForm = () => {
     });
 
     const history = useHistory();
-
-    const { signIn } = useAuth();
+    const dispatch = useDispatch();
     const [errors, setErrors] = useState({});
+    const [enterError, setEnterError] = useState(null);
 
     const handleChange = (target) => {
-        setData(prevState => ({
+        setData((prevState) => ({
             ...prevState,
             [target.name]: target.value
         }));
+        setEnterError(null);
     };
 
     useEffect(() => {
@@ -60,20 +62,14 @@ const LoginForm = () => {
         return Object.keys(errors).length === 0;
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         if (!validate()) return;
-        try {
-            await signIn(data);
-            history.push(history.location.state ?
-                history.location.state.form.pathname :
-                "/");
-        } catch (error) {
-            setErrors(error);
-        }
+        const redirect = history.location.state ? history.location.state.from.pathname : "/";
+        dispatch(login({ payload: data, redirect }));
     };
 
-    const buttonIsValid = Object.keys(errors).length === 0;
+    const isValid = Object.keys(errors).length === 0;
 
     return (
         <form onSubmit={handleSubmit}>
@@ -86,10 +82,14 @@ const LoginForm = () => {
                 name="stayOn"
             >Stay login
             </CheckBoxField>
-
-            <div className="d-grid gap-2">
-                <button className="btn btn-primary" type="submit" disabled={!buttonIsValid}>Enter</button>
-            </div>
+            {enterError && <p className="text-danger">{enterError}</p>}
+            <button
+                className="btn btn-primary w-100 mx-auto"
+                type="submit"
+                disabled={!isValid || enterError}
+            >
+                Submit
+            </button>
         </form>
     );
 };
