@@ -7,12 +7,11 @@ import Main from "./layouts/Main";
 import NotFound from "./components/common/NotFound";
 import Users from "./layouts/Users";
 import LogOut from "./layouts/LogOut";
-import { ProfessionProvider } from "./hooks/useProfession";
 import { AuthProvider } from "./hooks/useAuth";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { useDispatch } from "react-redux";
 import { loadQualitiesList } from "./store/qualities";
-import { loadProfessionsList } from "./store/profession";
+import { loadProfessionsList } from "./store/professions";
 
 function App() {
     const dispatch = useDispatch();
@@ -24,16 +23,14 @@ function App() {
         <>
             <AuthProvider>
                 <NavBar />
-                <ProfessionProvider>
-                    <Switch>
-                        <ProtectedRoute path="/users/:userId?/:edit?" component={Users} />
-                        <Route path="/login/:type?" component={Login} />
-                        <Route path="/logout" component={LogOut} />
-                        <Route path="/" exact component={Main} />
-                        <Route path="/404" component={NotFound} />
-                        <Redirect to="404" />
-                    </Switch>
-                </ProfessionProvider>
+                <Switch>
+                    <ProtectedRoute path="/users/:userId?/:edit?" component={Users} />
+                    <Route path="/login/:type?" component={Login} />
+                    <Route path="/logout" component={LogOut} />
+                    <Route path="/" exact component={Main} />
+                    <Route path="/404" component={NotFound} />
+                    <Redirect to="404" />
+                </Switch>
             </AuthProvider>
             <ToastContainer />
         </>

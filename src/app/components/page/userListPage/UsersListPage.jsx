@@ -9,7 +9,7 @@ import InputSearch from "../../ui/InputSearch";
 import { useUser } from "../../../hooks/useUsers";
 import { useAuth } from "../../../hooks/useAuth";
 import { useSelector } from "react-redux";
-import { getProfessions, getProfessionsLoadingStatus } from "../../../store/profession";
+import { getProfessions, getProfessionsLoadingStatus } from "../../../store/professions";
 
 const UsersListPage = () => {
     const { users } = useUser();

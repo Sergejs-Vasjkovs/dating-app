@@ -9,7 +9,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getQualities } from "../../store/qualities";
-import { getProfessions } from "../../store/profession";
+import { getProfessions } from "../../store/professions";
 
 const RegisterForm = () => {
     const history = useHistory();

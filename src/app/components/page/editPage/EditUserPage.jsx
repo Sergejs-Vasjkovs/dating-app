@@ -8,7 +8,7 @@ import validator from "../../../utils/validator";
 import { useAuth } from "../../../hooks/useAuth";
 import { useSelector } from "react-redux";
 import { getQualities, getQualitiesLoadingStatus } from "../../../store/qualities";
-import { getProfessions, getProfessionsLoadingStatus } from "../../../store/profession";
+import { getProfessions, getProfessionsLoadingStatus } from "../../../store/professions";
 
 const EditUserPage = () => {
     const history = useHistory();
