@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Bookmark from "../common/Bookmark";
 import Qualities from "./qualities";
 import Table from "../common/table";
-import Profession from "../ui/Profession";
+import Profession from "./Profession";
 import { Link } from "react-router-dom";
 
 const UsersTable = ({ users, selectedSort, onSort }) => {
