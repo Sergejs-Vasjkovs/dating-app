@@ -1,20 +1,37 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import NewCommentForm from "./NewCommentForm";
 import Comment from "./Comment";
 import { orderBy } from "lodash";
-import { useComments } from "../../hooks/useComments";
+import { useDispatch, useSelector } from "react-redux";
+import { createComment, getComments, getCommentsLoadingStatus, loadCommentsList, removeComment } from "../../store/comments";
+import { useParams } from "react-router-dom";
+import { nanoid } from "nanoid";
+import { getCurrentUserId } from "../../store/users";
 
 const CommentsListComponent = () => {
-    const { comments, createComment, isLoading, removeComment } = useComments();
+    const { userId } = useParams();
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(loadCommentsList(userId));
+    }, [userId]);
+    const isLoading = useSelector(getCommentsLoadingStatus());
+    const comments = useSelector(getComments());
+    const currentUserId = useSelector(getCurrentUserId());
 
     const handleAddComment = data => {
-        createComment(data);
+        const comment = {
+            ...data,
+            _id: nanoid(),
+            pageId: userId,
+            created_at: Date.now(),
+            userId: currentUserId
+        };
+        dispatch(createComment(comment));
     };
 
     const handleDeleteComment = id => {
-        console.log(id);
-        removeComment(id);
+        dispatch(removeComment(id));
     };
 
     const sortedComments = orderBy(comments, ["created_at"], ["desc"]);
@@ -32,11 +49,13 @@ const CommentsListComponent = () => {
                         <div className="card-body ">
                             <h2>Comments</h2>
                             <hr />
-                            {sortedComments.map(comment => <Comment
-                                key={comment._id}
-                                data={comment}
-                                onRemove={handleDeleteComment}
-                            />)}
+                            {!isLoading ?
+                                sortedComments.map(comment => <Comment
+                                    key={comment._id}
+                                    data={comment}
+                                    onRemove={handleDeleteComment}
+                                />) :
+                                <p>Loading comments</p>}
                         </div>
                     </div>)}
             </>

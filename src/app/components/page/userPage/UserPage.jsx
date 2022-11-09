@@ -4,7 +4,6 @@ import UserInfoCard from "../../common/user/UserInfoCard";
 import UserQualitiesCard from "../../common/user/UserQualitiesCard";
 import UserMeetingsCard from "../../common/user/UserMeetingsCard";
 import CommentsList from "../../common/CommentsList";
-import { CommentsProvider } from "../../../hooks/useComments";
 import { useSelector } from "react-redux";
 import { getUserById } from "../../../store/users";
 
@@ -21,9 +20,7 @@ const UserPage = ({ userId }) => {
                 </div>
 
                 <div className="col-md-8">
-                    <CommentsProvider>
-                        <CommentsList />
-                    </CommentsProvider>
+                    <CommentsList />
                 </div>
             </div>
         </div >);
